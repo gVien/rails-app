@@ -1,0 +1,10 @@
+/*
+Setting up bootstrap
+These two lines include the entire Bootstrap CSS framework.
+An alternative way is to use the CDN linkes at
+http://getbootstrap.com/getting-started/
+*/
+
+@import "bootstrap-sprockets";
+@import "bootstrap";
+
