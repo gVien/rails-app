@@ -37,4 +37,27 @@ class UserTest < ActiveSupport::TestCase
     @user.email = "z" * 244 + "@example.com"
     assert_not(@user.valid?, "Email should not be longer than 255 characters")
   end
+
+  test "email validation should accept valid addresses format" do
+    valid_addresses = %w[user@example.com USER@example2.com E_w-Q@one.two.edu first.last@company.tw hello+there@b.ru]
+
+    valid_addresses.each do |valid_address|
+      @user.email = valid_address
+      # returns true if @user.valid is true
+      # if false and returns the message per the element
+      assert(@user.valid?, "#{valid_address.inspect} should be valid format")
+    end
+  end
+
+  test "email validation should reject invalid addresses format" do
+    invalid_addresses = %w[user@example,com user_at_foo.org user.name@example.
+                           foo@bar_baz.com foo@bar+baz.com]
+    invalid_addresses.each do |invalid_address|
+      @user.email = invalid_address
+      # all @user.valid? will return true which assert_not is not expecting (it expects false or nil)
+      # Returns the message if @user.valid? true
+      # add regexp in model solves this, since all these emails are not valid (returns false)
+      assert_not(@user.valid?, "#{invalid_address.inspect} should be invalid")
+    end
+  end
 end
