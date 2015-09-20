@@ -67,4 +67,15 @@ class UserTest < ActiveSupport::TestCase
     @user.save
     assert_not(duplicate_user.valid?, "#{duplicate_user.email} should be unique")
   end
+
+  test "password should be present (cannot be blank" do
+    @user.password = @user.password_confirmation = " " * 6
+    # if @user.valid? is true, then it will display the message
+    assert_not(@user.valid?, "Password should be present (non-blank)")
+  end
+
+  test "password should have a minimum length of 6" do
+    @user.password = @user.password_confirmation = "a" * 5
+    assert_not(@user.valid?, "password must be at least 6 characters long")
+  end
 end
