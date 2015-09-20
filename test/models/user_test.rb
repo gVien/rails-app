@@ -14,17 +14,27 @@ class UserTest < ActiveSupport::TestCase
 
   # assert_not(object, message=nil)
   # returns true if object is nil or false
-  # returns the error message if it is false (default to nil, which is falsy)
-  # if object is true, then it's truthy
+  # if object is true, then it's truthy and it returns a statement "expect <object> to be nil or false" (can also have a custom message)
   test "should be invalid" do
     # blank name is considered not present in model
     @user.name = "   "
-    # since @user.valid? is false, this returns true
+    # since @user.valid? is true, it returns a message expecting that @user.valid? to be nil or false (which means the test results in an error if the model does not have a validation that name is present -- to make @user.valid? return false)
     assert_not(@user.valid?)
   end
 
   test "email should be present" do
     @user.email = " "
     assert_not(@user.valid?)
+  end
+
+  test "name should not be more than 50 characters" do
+    @user.name = "z" * 51
+    # @user.valid returns true if the model does not restrict to less than or equal to 50 characters. The assert_not expects a false or nil value
+    assert_not(@user.valid?, "Name should not be longer than 50 characters")
+  end
+
+  test "email should not be more than 255 characters" do
+    @user.email = "z" * 244 + "@example.com"
+    assert_not(@user.valid?, "Email should not be longer than 255 characters")
   end
 end
