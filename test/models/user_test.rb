@@ -9,7 +9,7 @@ class UserTest < ActiveSupport::TestCase
   # is this a valid user? test
   # asset method succeeds if valid? method returns true, fails if it's false
   test "should be valid" do
-    assert(@user.valid?)
+    assert(@user.valid?, "User should be valid")
   end
 
   # assert_not(object, message=nil)
