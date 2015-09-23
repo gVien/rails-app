@@ -11,6 +11,15 @@ http://getbootstrap.com/getting-started/
 /* mixins, variables, and properties */
 $light-gray: #777;
 
+/* @mixin introduces Sass mixin facility, which is the box-sizing.
+A mixin allows a group of CSS rules to be packaged up and used for multiple elements
+This means that @include box_sizing under .debug_dump packages all of these into the .debug_dump*/
+@mixin box_sizing {
+  -moz-box-sizing:    border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing:         border-box;
+}
+
 /* universal */
 
 body {
@@ -104,4 +113,12 @@ footer {
   }
 }
 
+/* miscellaneous */
 
+.debug_dump {
+  clear: both;
+  float: left;
+  width: 100%;
+  margin-top: 45px;
+  @include box_sizing;
+}
