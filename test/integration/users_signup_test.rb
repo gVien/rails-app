@@ -18,6 +18,11 @@ class UsersSignupTest < ActionDispatch::IntegrationTest
                                password_confirmation: "pass" }
     end
     assert_template "users/new"
+    # check to make sure these elements exists when the sign up has errors, then the test passes
+    # printing any of these out shows Nokogiri object, interesting...
+    assert_select("div#error_explanation")
+    assert_select("div li")
+    assert_select("div.field_with_errors")
   end
 
   # testing if submission is valid (created) and confirm the contents of the database
@@ -33,5 +38,7 @@ class UsersSignupTest < ActionDispatch::IntegrationTest
         password_confirmation: "password"}
     end
     assert_template "users/show"
+    # assert_not must accept a false argument to pass test, so in this case. flash is not an empty object
+    assert_not(flash.empty?)
   end
 end
