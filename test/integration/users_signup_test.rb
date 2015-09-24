@@ -38,5 +38,7 @@ class UsersSignupTest < ActionDispatch::IntegrationTest
         password_confirmation: "password"}
     end
     assert_template "users/show"
+    # assert_not must accept a false argument to pass test, so in this case. flash is not an empty object
+    assert_not(flash.empty?)
   end
 end
