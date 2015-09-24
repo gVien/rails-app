@@ -12,4 +12,9 @@ module SessionsHelper
     # find method raises an error if session[:user_id] is nil
     @current_user ||= User.find_by(id: session[:user_id])
   end
+
+  # returns true if the user is logged in, false otherwise
+  def logged_in?
+    !current_user.nil?
+  end
 end
