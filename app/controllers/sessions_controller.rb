@@ -6,7 +6,8 @@ class SessionsController < ApplicationController
     user = User.find_by(email: params[:session][:email].downcase)
 
     if user && user.authenticate(params[:session][:password])
-      # go to profile (show) page
+      log_in(user)
+      redirect_to user  # or user_url(user)
     else
       # create an error message and render log in page
       # flash does not work like the one in the user controller since the render method does not count as a request
