@@ -7,4 +7,9 @@ module SessionsHelper
     session[:user_id] = user.id
   end
 
+  # return current user that is in session (if any)
+  def current_user
+    # find method raises an error if session[:user_id] is nil
+    @current_user ||= User.find_by(id: session[:user_id])
+  end
 end
