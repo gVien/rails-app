@@ -1,0 +1,5 @@
+# This fixture will be used to perform the test outlined in the User model above the digest method
+gai:
+  name: Gai Example
+  email: g@example.com
+  password_digest: <%= User.digest("123456") %>
