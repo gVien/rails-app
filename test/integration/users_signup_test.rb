@@ -38,6 +38,7 @@ class UsersSignupTest < ActionDispatch::IntegrationTest
         password_confirmation: "password"}
     end
     assert_template "users/show"
+    assert is_logged_in?  # this tests the user is logged after signup (if the method returns true, the test passes, otherwise the test fails)
     # assert_not must accept a false argument to pass test, so in this case. flash is not an empty object
     assert_not(flash.empty?)
   end
