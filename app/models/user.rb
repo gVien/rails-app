@@ -30,8 +30,14 @@ class User < ActiveRecord::Base
     SecureRandom.urlsafe_base64 #uses base 64 to generate a random token (random combination of A–Z, a–z, 0–9, “-”, and “_”)
   end
 
+  # method to remember a user in the dataase for user in persistent sessions
   def remember
     self.remember_token = self.new_token
     update_attribute(:remember_digest, self.digest(remember_token))
+  end
+
+  # returns true if the given token matches the digest
+  def authenticated?(remember_token)
+    BCrypt::Password.new(remember_digest).is_password?(remember_token)  # note this is the same as BCrypt::Password.new(remember_digest).is_password?(remember_token) but it is clearer
   end
 end
