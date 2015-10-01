@@ -17,4 +17,10 @@ module SessionsHelper
   def logged_in?
     !current_user.nil?
   end
+
+  # helper method to log out the current user
+  def log_out
+    session.delete(:user_id)  #or session[:user_id] = nil
+    @current_user = nil #this is needed if @current_user is created before the destroy action (which is not in the case now. this is for completeness and security reason)
+  end
 end
