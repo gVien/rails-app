@@ -7,10 +7,46 @@ module SessionsHelper
     session[:user_id] = user.id
   end
 
-  # return current user that is in session (if any)
+  # remembers a user in a persistent session
+  def remember(user)
+    user.remember
+    # cookie (which like session, can be treated as a hash) consists of two pieces of info: a value and an optional expires date. e.g
+    # cookies[:remember_token] = { value: some_token, expires: 20.years.from_now.utc }
+    # which is the same as cookies.permanent[:remember_token] = remember_token
+    # To store the user's id in the cookies we can do (like session)
+    # cookies[:user_id] = user.id
+    # this exposes the user.id in a cookie, so we use a signed cookie
+    #(which securely encrypted the cookie before placing it on the browser)
+    # cookies.signed[:user_id] = user.id
+    # putting them together becomes
+    cookies.permanent.signed[:user_id] = user.id
+    cookies.permanent[:remember_token] = user.remember_token  # setting the :remember_token value to link with the user's token (hashed) value (e.g "KQTL7G3N7ziLneWdQaSfvw")
+  end
+
+  # returns the user corresponding to the remember token cookie (since we incorporated cookies, this note was modified from the previous one, which is "return current user that is in session (if any)") - this is for reference
   def current_user
+    # to incorporate the remember me feature, we needed to modify the original code:
+    # @current_user ||= User.find_by(id: session[:user_id])
+    # to incorporate cookies
+
+    # to get persistent sessions, we want to retrieve the user from the temporary session
+    # if sessin[:user_id] exists
+    # otherwise, we should look for cookies[:user_id] to retrieve (and login) the user
+    # corresponding to the persistent session
+
+    # note that user_id = session[:user_id] is not a comparison
+    # it is an assignment, which reads "if session of user id exists (while setting user id to session of user id)"
+    # do NOT READ it as "if user id equals session of user id...)", a parenthesis is there to mean it's an assignment
+    if (user_id = session[:user_id])  # if session of user id exists while setting it equal to user id
     # find method raises an error if session[:user_id] is nil
-    @current_user ||= User.find_by(id: session[:user_id])
+      @current_user ||= User.find_by(id:user_id)
+    elsif (user_id = cookies.signed[:user_id])
+      user = User.find_by(id: user_id)  # cookies
+      if user && user.authenticated?(cookies[:remember_token])
+        log_in(user)
+        @current_user = user
+      end
+    end
   end
 
   # returns true if the user is logged in, false otherwise
