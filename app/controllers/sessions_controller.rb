@@ -7,6 +7,7 @@ class SessionsController < ApplicationController
 
     if user && user.authenticate(params[:session][:password])
       log_in(user)
+      remember user
       redirect_to user  # or user_url(user)
     else
       # create an error message and render log in page
@@ -19,5 +20,8 @@ class SessionsController < ApplicationController
   end
 
   def destroy
+    # the condition for log_out is needed to prevent multiple tabs of the site error (e.g. if a user logs off on one tab, it does not cause an error if the user tries to log out again in the second tab)
+    log_out if logged_in?
+    redirect_to root_url
   end
 end

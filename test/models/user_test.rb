@@ -86,4 +86,14 @@ class UserTest < ActiveSupport::TestCase
     @user.password = @user.password_confirmation = "a" * 5
     assert_not(@user.valid?, "password must be at least 6 characters long")
   end
+
+  # this test tries to replicate a scenario when a user use two different browsers to log into the sites
+  test "authenticated? should return false for a user with nil digest" do
+    # the pass passes if the argument returns false (when the token is not equal to the remember digest)
+    # the setup method initially does not have a remember digest, so this will be false
+    # we need to update the authenticated? method to return false if remember_digest is nil
+    # (otherwise the test will give us an error, since the digest does not exist in the set up method
+    # -- multiple browsers "bug" if one browser window logs out while the other isn't)
+    assert_not(@user.authenticated?(""))
+  end
 end

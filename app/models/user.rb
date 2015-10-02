@@ -1,4 +1,5 @@
 class User < ActiveRecord::Base
+  attr_accessor :remember_token
   before_save { self.email = email.downcase }  # can be upcase, make email to be uniform so that it is case insensitive before saving to database
   validates :name, :presence => true, :length => { maximum: 50 }
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i
@@ -22,5 +23,29 @@ class User < ActiveRecord::Base
     cost = ActiveModel::SecurePassword.min_cost ? BCrypt::Engine::MIN_COST : BCrypt::Engine.cost
     # string is the string that needs to be hash and cost is the computational cost to calculate the hash. The higher the cost, it will be harder to determine the original password
     BCrypt::Password.create(string, cost: cost)
+  end
+
+  # method returns a random token
+  def self.new_token
+    SecureRandom.urlsafe_base64 #uses base 64 to generate a random token (random combination of A–Z, a–z, 0–9, “-”, and “_”)
+  end
+
+  # method to remember a user in the dataase for user in persistent sessions
+  def remember
+    self.remember_token = User.new_token  # note self refers to the instance of User class while User refers to the class method
+    update_attribute(:remember_digest, User.digest(remember_token))
+  end
+
+  # returns true if the given token matches the digest
+  # this is similar to authenticate method from BCrypt
+  def authenticated?(remember_token)
+    # remember_token is not the same as the accessor (this is a reference, in case there is a confusion in the future)
+    return false if remember_digest.nil?  #accounts for the multiple browsers that try to log out of the site
+    BCrypt::Password.new(remember_digest).is_password?(remember_token)  # note this is the same as BCrypt::Password.new(remember_digest) == remember_token but it is clearer
+  end
+
+  # method to forget a user
+  def forget
+    update_attribute(:remember_digest, nil)
   end
 end

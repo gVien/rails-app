@@ -35,14 +35,27 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
   # type this to test the file
   # bundle exec rake test TEST=test/integration/users_login_test.rb
   # can add 'TESTOPTS="--name test_login_with_valid_information" to test only the test below'
-  test "login with valid information" do
+  # update to add in logout
+  test "login with valid information followed by logout" do
     get login_path  # 1
     post login_path, session: { email: @user.email, password: "123456" }  #2
+    assert is_logged_in?  #additional test for logout
     assert_redirected_to @user  #2 (assert_redirected_to checks the right redirect target)
     follow_redirect!    #2 (this visits the target page)
     assert_template("users/show")   #2
     assert_select "a[href=?]", login_path, count: 0   #3 (this test if the login_path url has a count of 0, meaning it's no longer there)
     assert_select "a[href=?]", logout_path  #4 (this test for logout url is there in the HTML)
     assert_select "a[href=?]", user_path(@user)   #5 (test if user, e.g. /users/1 is there)
+
+    # additional tests below to test for logout
+    delete logout_path
+    assert_not is_logged_in?  # if the argument is true, the test fails, so it must be false
+    assert_redirected_to root_url
+    # simulate a user clicking logout in a second window (or tabs -- if a user opens two or more tabs of the site then if the user logs out in one tab it will not cause an error in the other tabs when the user clicks "logout" again)
+    delete logout_path  # in order to pass this and meet the 2 or more tabs "bug" we need to modify the destroy action in session ctrler to log out only if the user is loggeg in
+    follow_redirect!  #visit target page above
+    assert_select "a[href=?]", login_path #(test to check if the login url is there)
+    assert_select "a[href=?]", logout_path, count: 0  #(test checks if logout url count is 0)
+    assert_select "a[href=?]", user_path(@user), count: 0
   end
 end
