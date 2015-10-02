@@ -42,4 +42,9 @@ class User < ActiveRecord::Base
     # remember_token is not the same as the accessor (this is a reference, in case there is a confusion in the future)
     BCrypt::Password.new(remember_digest).is_password?(remember_token)  # note this is the same as BCrypt::Password.new(remember_digest).is_password?(remember_token) but it is clearer
   end
+
+  # method to forget a user
+  def forget
+    update_attribute(:remember_digest, nil)
+  end
 end
