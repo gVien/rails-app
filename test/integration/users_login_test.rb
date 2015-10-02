@@ -58,4 +58,21 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
     assert_select "a[href=?]", logout_path, count: 0  #(test checks if logout url count is 0)
     assert_select "a[href=?]", user_path(@user), count: 0
   end
+
+  # remember me feature test
+  # testing if we click on the remember me box and see if the cookies exist
+  test "login with remembering (value of 1)" do
+    log_in_as(@user, remember_me: "1")  # since remember me is on, a remember_token is created inside the cookie
+    # this is an improved test to check for the remember value of "1"
+    # we want to verify that the user's remember token matches with the cookie token
+    # the assigns method lets us access the instance variable (eg @user) & its virtual attribute (e.g. remember_token)
+    assert_equal(cookies["remember_token"], assigns(:user).remember_token)
+  end
+
+  # this test checks if the cookies does not exist if the remember me box is not check
+  # test passes if cookies is nil
+  test "login without remembering (value of 0)" do
+    log_in_as(@user, remember_me: "0")
+    assert_nil(cookies[:remember_token])
+  end
 end

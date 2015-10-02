@@ -3,12 +3,12 @@ class SessionsController < ApplicationController
   end
 
   def create
-    user = User.find_by(email: params[:session][:email].downcase)
+    @user = User.find_by(email: params[:session][:email].downcase)
 
-    if user && user.authenticate(params[:session][:password])
-      log_in(user)
-      remember user
-      redirect_to user  # or user_url(user)
+    if @user && @user.authenticate(params[:session][:password])
+      log_in(@user)
+      params[:session][:remember_me] == "1" ? remember(@user) : forget(@user) # value of checkbox is "1", and "0" if unchecked
+      redirect_to @user  # or user_url(user)
     else
       # create an error message and render log in page
       # flash does not work like the one in the user controller since the render method does not count as a request

@@ -41,6 +41,7 @@ module SessionsHelper
     # find method raises an error if session[:user_id] is nil
       @current_user ||= User.find_by(id:user_id)
     elsif (user_id = cookies.signed[:user_id])
+      # raise   # test still passes, so this elsif branch is not tested (test would raise an error if it gets here)
       user = User.find_by(id: user_id)  # cookies
       if user && user.authenticated?(cookies[:remember_token])
         log_in(user)
