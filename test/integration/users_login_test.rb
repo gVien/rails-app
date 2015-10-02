@@ -51,6 +51,8 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
     delete logout_path
     assert_not is_logged_in?  # if the argument is true, the test fails, so it must be false
     assert_redirected_to root_url
+    # simulate a user clicking logout in a second window (or tabs -- if a user opens two or more tabs of the site then if the user logs out in one tab it will not cause an error in the other tabs when the user clicks "logout" again)
+    delete logout_path  # in order to pass this and meet the 2 or more tabs "bug" we need to modify the destroy action in session ctrler to log out only if the user is loggeg in
     follow_redirect!  #visit target page above
     assert_select "a[href=?]", login_path #(test to check if the login url is there)
     assert_select "a[href=?]", logout_path, count: 0  #(test checks if logout url count is 0)
