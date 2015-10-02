@@ -32,8 +32,8 @@ class User < ActiveRecord::Base
 
   # method to remember a user in the dataase for user in persistent sessions
   def remember
-    self.remember_token = self.new_token
-    update_attribute(:remember_digest, self.digest(remember_token))
+    self.remember_token = User.new_token  # note self refers to the instance of User class while User refers to the class method
+    update_attribute(:remember_digest, User.digest(remember_token))
   end
 
   # returns true if the given token matches the digest
