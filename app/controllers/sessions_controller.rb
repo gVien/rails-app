@@ -7,7 +7,7 @@ class SessionsController < ApplicationController
 
     if user && user.authenticate(params[:session][:password])
       log_in(user)
-      remember user
+      params[:session][:remember_me] == "1" ? remember(user) : forget(user) # value of checkbox is "1", and "0" if unchecked
       redirect_to user  # or user_url(user)
     else
       # create an error message and render log in page
