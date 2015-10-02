@@ -58,4 +58,19 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
     assert_select "a[href=?]", logout_path, count: 0  #(test checks if logout url count is 0)
     assert_select "a[href=?]", user_path(@user), count: 0
   end
+
+  # remember me feature test
+  # testing if we click on the remember me box and see if the cookies exist
+  test "login with remembering (value of 1)" do
+    log_in_as(@user, remember_me: "1")
+    # note that cookies[:remember_token] do not work in this test for some reasons, so the alternative syntex (cookies["remember_token"]) is used instead
+    assert_not_nil(cookies["remember_token"])
+  end
+
+  # this test checks if the cookies does not exist if the remember me box is not check
+  # test passes if cookies is nil
+  test "login without remembering (value of 0)" do
+    log_in_as(@user, remember_me: "0")
+    assert_nil(cookies[:remember_token])
+  end
 end
