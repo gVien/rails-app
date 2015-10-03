@@ -1,4 +1,7 @@
 class UsersController < ApplicationController
+  # if a user attemps to access /users/1/edit, it checks for logged_in_user method
+  # we limit to only the edit and update action only, since a user cannot edit or update if the user isn't logged in
+  # before_action :logged_in_user, only: [:edit, :update]
 
   def show
     @user = User.find(params[:id])
@@ -40,5 +43,17 @@ class UsersController < ApplicationController
 
     def user_params
       params.require(:user).permit(:name, :email, :password, :password_confirmation)
+    end
+
+    # before filter
+
+    # check if the user is logged in
+    # this method is being used with before filter, which uses the before_action method,
+    # which checks for a particular to be called method before it performs the given action
+    def logged_in_user
+      unless logged_in?   #if user is not logged in (if false)
+        flash[:danger] = "Please log in to continue."
+        redirect_to login_url
+      end
     end
 end
