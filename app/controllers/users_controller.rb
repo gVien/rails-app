@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
   # if a user attemps to access /users/1/edit, it checks for logged_in_user method
   # we limit to only the edit and update action only, since a user cannot edit or update if the user isn't logged in
-  # before_action :logged_in_user, only: [:edit, :update]
+  before_action :logged_in_user, only: [:edit, :update]
 
   def show
     @user = User.find(params[:id])
