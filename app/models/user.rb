@@ -5,7 +5,11 @@ class User < ActiveRecord::Base
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i
   validates :email, :presence => true, :length => { maximum: 255 }, :format => { with: VALID_EMAIL_REGEX }, :uniqueness => { case_sensitive: false }
   has_secure_password
-  validates :password, presence: true, length: { minimum: 6 }
+
+  # allow_nil is true seems like the new users are allowed to have empty password
+  # but this is not the case, as has_secure_password includes a separate presence validation
+  # that specifically catches nil passwords (i.e. does not allow empty password)
+  validates :password, presence: true, length: { minimum: 6 }, allow_nil: true
 
   # Now time to test the login functionality of the site (8.2.4).
   # the flow will be the following:
