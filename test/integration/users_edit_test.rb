@@ -12,6 +12,7 @@ class UsersEditTest < ActionDispatch::IntegrationTest
   # 3. patch (update) the user
   # 4. verify that the template is still there (since it's an unsuccessful edit)
   test "unsuccessful edit of user" do
+    log_in_as(@user)
     get edit_user_path @user
     assert_template("users/edit") # from users folder
     patch user_path(@user), user: { name: "gai",
@@ -27,6 +28,7 @@ class UsersEditTest < ActionDispatch::IntegrationTest
   # successful redirect to the profile page and verify the user's information is changed correctly in the database
   # password + password_confirmation are left blank (in case if the useres don't want to update it)
   test "successful edit a user" do
+    log_in_as(@user)
     get edit_user_path(@user)
     assert_template "users/edit"
     name = "gai"  # for verification below
