@@ -4,6 +4,7 @@ class UsersControllerTest < ActionController::TestCase
 
   def setup
     @user = users(:gai)
+    @second_user = users(:new_user)
   end
 
   test "should get new" do
@@ -25,6 +26,27 @@ class UsersControllerTest < ActionController::TestCase
 
   test "should redirect update if a user is not logged in" do
     patch :update, id: @user, user: { name: @user.name, email: @user.email}
+    assert_not flash.empty?
+    assert_redirected_to login_url
+  end
+
+  # this integration test ensures a user cannot edit/update the profilt of another user
+  # the flow is (based on users in users.yml):
+  # 1. second_user logs in
+  # 2. second user tries to edit gai's profile
+  # 3. check if the flash is empty
+  # 4. check if the edit link is redirected
+  test "should redirect edit if logged in as wrong user" do
+    log_in_as(@second_user)
+    get :edit, id: @user
+    assert_not flash.empty?
+    assert_redirected_to login_url
+  end
+
+  test "should redirect update if logged in as wrong user" do
+    log_in_as(@second_user)
+    patch :update, id: @user, user: { name: @user.name,
+                                      email: @user.email }
     assert_not flash.empty?
     assert_redirected_to login_url
   end

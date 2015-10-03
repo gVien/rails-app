@@ -3,3 +3,8 @@ gai:
   name: Gai Example
   email: g@example.com
   password_digest: <%= User.digest("123456") %>
+
+new_user:
+  name: User2 Example
+  email: user@newemail.com
+  password_digest: <%= User.digest("123456") %>
