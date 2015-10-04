@@ -3,6 +3,9 @@ class UsersController < ApplicationController
   # we limit to only the edit and update action only, since a user cannot edit or update if the user isn't logged in
   before_action :logged_in_user, only: [:edit, :update]
 
+  # like logged_in_user, correct_user checks if it is the correct user when a user attempts to edit/update another user's profile
+  before_action :correct_user, only: [:edit, :update]
+
   def show
     @user = User.find(params[:id])
   end
@@ -55,5 +58,12 @@ class UsersController < ApplicationController
         flash[:danger] = "Please log in to continue."
         redirect_to login_url
       end
+    end
+
+    # this method checks that when current user attempts to edit another user's
+    # profile (change "/users/1/edit" to "/users/2/edit), it redirect to root url
+    def correct_user
+      @user = User.find(params[:id])
+      redirect_to root_url unless @user == current_user
     end
 end

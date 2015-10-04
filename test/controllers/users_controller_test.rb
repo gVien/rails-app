@@ -34,20 +34,20 @@ class UsersControllerTest < ActionController::TestCase
   # the flow is (based on users in users.yml):
   # 1. second_user logs in
   # 2. second user tries to edit gai's profile
-  # 3. check if the flash is empty
-  # 4. check if the edit link is redirected
+  # 3. verify that the flash is empty
+  # 4. verify that edit link is redirected to root url (as defined in user ctrler correct_user method)
   test "should redirect edit if logged in as wrong user" do
     log_in_as(@second_user)
     get :edit, id: @user
-    assert_not flash.empty?
-    assert_redirected_to login_url
+    assert flash.empty?
+    assert_redirected_to root_url
   end
 
   test "should redirect update if logged in as wrong user" do
     log_in_as(@second_user)
     patch :update, id: @user, user: { name: @user.name,
                                       email: @user.email }
-    assert_not flash.empty?
-    assert_redirected_to login_url
+    assert flash.empty?
+    assert_redirected_to root_url
   end
 end
