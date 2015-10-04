@@ -12,6 +12,12 @@ class UsersControllerTest < ActionController::TestCase
     assert_response :success
   end
 
+  # verify that logged is required if the non-logged in user attempts to access the index page
+  test "redirect index if not logged in" do
+    get :index
+    assert_redirected_to login_url
+  end
+
   # this tests the before_action method (edit & update) in the users controller
   # the two tests will work with the before_action (note the test fails if it's uncomment out)
   # we need to test that the site is redirected to the login page if a guest tries to access "users/1/edit" if he/she is not logged in
