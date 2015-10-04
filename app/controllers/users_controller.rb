@@ -62,8 +62,9 @@ class UsersController < ApplicationController
 
     # this method checks that when current user attempts to edit another user's
     # profile (change "/users/1/edit" to "/users/2/edit), it redirect to root url
+    # confirms the correct user
     def correct_user
-      @user = User.find(params[:id])
-      redirect_to root_url unless @user == current_user
+      user = User.find(params[:id])
+      redirect_to root_url unless current_user?(user)
     end
 end

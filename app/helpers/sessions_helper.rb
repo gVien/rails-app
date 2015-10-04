@@ -23,6 +23,12 @@ module SessionsHelper
     cookies.permanent[:remember_token] = user.remember_token  # setting the :remember_token value to link with the user's token (hashed) value (e.g "KQTL7G3N7ziLneWdQaSfvw")
   end
 
+
+  # check if the user is current user, returns true if it is, false otherwise
+  def current_user?(user)
+    user == current_user
+  end
+
   # returns the user corresponding to the remember token cookie (since we incorporated cookies, this note was modified from the previous one, which is "return current user that is in session (if any)") - this is for reference
   def current_user
     # to incorporate the remember me feature, we needed to modify the original code:
