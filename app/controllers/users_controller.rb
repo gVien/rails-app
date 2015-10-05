@@ -1,10 +1,15 @@
 class UsersController < ApplicationController
   # if a user attemps to access /users/1/edit, it checks for logged_in_user method
   # we limit to only the edit and update action only, since a user cannot edit or update if the user isn't logged in
-  before_action :logged_in_user, only: [:index, :edit, :update]
+  # update: added index for pagination (if user is logged in) and destroy for admin to destroy (if admin user is logged in)
+  before_action :logged_in_user, only: [:index, :edit, :update, :destroy]
 
   # like logged_in_user, correct_user checks if it is the correct user when a user attempts to edit/update another user's profile
   before_action :correct_user, only: [:edit, :update]
+
+  # enforcing security hole by checking if the user is the admin before performing the destroy action
+  # this allows the admin user to delete, otherwise (without checking if the user is admin) anyone can delete user using the command line
+  before_action :admin_user, only: :destroy
 
   def index
     @users = User.paginate(page: params[:page])
@@ -46,6 +51,12 @@ class UsersController < ApplicationController
     end
   end
 
+  def destroy
+    user = User.find(params[:id]).destroy
+    flash[:success] = "#{user.name.capitalize} is successfully deleted."
+    redirect_to users_url
+  end
+
   private
 
     def user_params
@@ -71,5 +82,11 @@ class UsersController < ApplicationController
     def correct_user
       user = User.find(params[:id])
       redirect_to root_url unless current_user?(user)
+    end
+
+    # confirms an admin user
+    # ensure that only the admin user is allowed to delete the user
+    def admin_user
+      redirect_to root_url unless current_user.admin?
     end
 end
