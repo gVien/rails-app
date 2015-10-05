@@ -56,4 +56,28 @@ class UsersControllerTest < ActionController::TestCase
     assert flash.empty?
     assert_redirected_to root_url
   end
+
+  # tests for destroy feature in user controller
+  # first test:
+  # 1. verify that non-admin user cannot delete a user (using assert no difference)
+  # 2. verify that the site redirect to login page if not logged in
+  test "should redirect destroy when not logged in" do
+    assert_no_difference "User.count" do
+      delete(:destroy, id: @user)
+    end
+    assert_redirected_to login_url
+  end
+
+  # second test
+  # second test:
+  # 1. login as non-admin user
+  # 2. verify that non-admin user cannot delete a user (using assert no difference)
+  # 3. verify that the site redirect to root url page if not logged in as admin
+  test "should redirect destroy when not logged in as admin user" do
+    log_in_as(@second_user)
+    assert_no_difference "User.count" do
+      delete(:destroy, id: @user)
+    end
+    assert_redirected_to login_url
+  end
 end
