@@ -27,14 +27,14 @@ class UsersEditTest < ActionDispatch::IntegrationTest
   # check for nonempty flash message
   # successful redirect to the profile page and verify the user's information is changed correctly in the database
   # password + password_confirmation are left blank (in case if the useres don't want to update it)
-  # update with friendly forwarding:
+  # update with friendly forwarding (9.2.3):
   # forward to the same destination (where they wanted to go but the site requires login) after user is logged in
   # note the log_in_as and get edit_user_path are reversed
   # ** we will verify that the redirect is redirecting to the same location
   test "successful edit a user with friendly forwarding" do
     get edit_user_path(@user)
     log_in_as(@user)
-    assert_redirected_to edit_user_path(@user)  # **
+    assert_redirected_to edit_user_path(@user) unless session[:forwarding_url].nil?  # **, unless statement from ch9 exercise 1
     # assert_template "users/edit"  # no longer needed with friendly forwarding
     name = "gai"  # for verification below
     email = "gai@gai.com" # for verification below
