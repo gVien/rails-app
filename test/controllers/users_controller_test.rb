@@ -80,4 +80,19 @@ class UsersControllerTest < ActionController::TestCase
     end
     assert_redirected_to root_url
   end
+
+  # ch9 ex3: test to make sure the admin attribute in model cannot be editable from the web
+  # add :admin in side user_params in users_controller to fail this test initially, then remove it to pass
+  # (this is to make sure the test is doing the right thing)
+  test "should not allow the admin attribute to be edited via the web" do
+    log_in_as(@second_user)
+    assert_not(@second_user.admin?) # to pass, arg should returns false
+    # now the second user tries to change the admin attribute to true
+    patch :update, id: @second_user, user: { password: "123456",
+                                             password_confirmation: "123456",
+                                             admin: true }
+    # must reload so the changes above will take effect
+    # we still want to see that the admin attribute is false after reload
+    assert_not @second_user.reload.admin?
+  end
 end
