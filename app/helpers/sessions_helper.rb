@@ -23,6 +23,12 @@ module SessionsHelper
     cookies.permanent[:remember_token] = user.remember_token  # setting the :remember_token value to link with the user's token (hashed) value (e.g "KQTL7G3N7ziLneWdQaSfvw")
   end
 
+
+  # check if the user is current user, returns true if it is, false otherwise
+  def current_user?(user)
+    user == current_user
+  end
+
   # returns the user corresponding to the remember token cookie (since we incorporated cookies, this note was modified from the previous one, which is "return current user that is in session (if any)") - this is for reference
   def current_user
     # to incorporate the remember me feature, we needed to modify the original code:
@@ -67,5 +73,17 @@ module SessionsHelper
     forget(current_user)
     session.delete(:user_id)  #or session[:user_id] = nil
     @current_user = nil #this is needed if @current_user is created before the destroy action (which is not in the case now. this is for completeness and security reason)
+  end
+
+  # redirect to store location (or the default) after the non-login user is logged in
+  def redirect_back_to_or(default)
+    redirect_to(session[:forwarding_url] || default)
+    session.delete(:forwarding_url)
+  end
+
+  # stores the URL the non-login user is trying to access, before logging in
+  def store_location
+    # request.url is used to get the requested url
+    session[:forwarding_url] = request.url if request.get?
   end
 end

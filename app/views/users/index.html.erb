@@ -1,0 +1,12 @@
+<%= provide(:title, "All Users") %>
+<h1>All Users</h1>
+
+<!-- will pagination automatically looks for @users in the controller -->
+<!-- will pagination requires us to modify User.all to use its methods -->
+<%= will_paginate %>
+
+  <ul class="users">
+    <%= render @users %>
+  </ul>
+
+<%= will_paginate %>

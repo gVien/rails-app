@@ -3,3 +3,22 @@ gai:
   name: Gai Example
   email: g@example.com
   password_digest: <%= User.digest("123456") %>
+  admin: true
+
+new_user:
+  name: User2 Example
+  email: user@newemail.com
+  password_digest: <%= User.digest("123456") %>
+
+# need more user to test pagination
+kathy:
+  name: kathy Example
+  email: kathy@newemail.com
+  password_digest: <%= User.digest("123456") %>
+
+<% 30.times do |i| %>
+user<%= i %>:
+  name: user <%= i %>
+  email: user<%= i %>@newemail.com
+  password_digest: <%= User.digest("123456") %>
+<% end %>
