@@ -1,6 +1,6 @@
 class User < ActiveRecord::Base
   attr_accessor :remember_token
-  before_save { self.email = email.downcase }  # can be upcase, make email to be uniform so that it is case insensitive before saving to database
+  before_save :downcase_email # can be upcase, make email to be uniform so that it is case insensitive before saving to database
   validates :name, :presence => true, :length => { maximum: 50 }
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i
   validates :email, :presence => true, :length => { maximum: 255 }, :format => { with: VALID_EMAIL_REGEX }, :uniqueness => { case_sensitive: false }
@@ -51,5 +51,22 @@ class User < ActiveRecord::Base
   # method to forget a user
   def forget
     update_attribute(:remember_digest, nil)
+  end
+
+  # lower case email (case insensitive)
+  def downcase_email
+    self.email = email.downcase
+  end
+
+  # this creates the activation token and digest for account activation
+  # a newly signed up user will have activation token and digest assigned to each user object
+  # before it's created (uses before_create callback)
+
+  def create_activation_digest
+    self.activation_token = User.new_token  # note self refers to the instance of User class while User refers to the class method
+    # similar to the remember method above but we won't be using `update_attribute` since we are not updating the attribute this time
+    # the difference this time is that the remember tokens and digests are created for users that already exist in the database,
+    # whereas the before_create callback happens before the user has been created.
+    self.activation_digest = User.digest(activation_token)
   end
 end

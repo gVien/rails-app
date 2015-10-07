@@ -4,21 +4,29 @@ gai:
   email: g@example.com
   password_digest: <%= User.digest("123456") %>
   admin: true
+  activated: true
+  activated_at: <%= Time.zone.now %>
 
 new_user:
   name: User2 Example
   email: user@newemail.com
   password_digest: <%= User.digest("123456") %>
+  activated: true
+  activated_at: <%= Time.zone.now %>
 
 # need more user to test pagination
 kathy:
   name: kathy Example
   email: kathy@newemail.com
   password_digest: <%= User.digest("123456") %>
+  activated: true
+  activated_at: <%= Time.zone.now %>
 
 <% 30.times do |i| %>
 user<%= i %>:
   name: user <%= i %>
   email: user<%= i %>@newemail.com
   password_digest: <%= User.digest("123456") %>
+  activated: true
+  activated_at: <%= Time.zone.now %>
 <% end %>
