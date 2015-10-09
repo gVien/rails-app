@@ -94,6 +94,6 @@ class UserTest < ActiveSupport::TestCase
     # we need to update the authenticated? method to return false if remember_digest is nil
     # (otherwise the test will give us an error, since the digest does not exist in the set up method
     # -- multiple browsers "bug" if one browser window logs out while the other isn't)
-    assert_not(@user.authenticated?(""))
+    assert_not(@user.authenticated?(:remember, ""))
   end
 end
