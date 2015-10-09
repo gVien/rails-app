@@ -43,10 +43,23 @@ class User < ActiveRecord::Base
 
   # returns true if the given token matches the digest
   # this is similar to authenticate method from BCrypt
-  def authenticated?(remember_token)
-    # remember_token is not the same as the accessor (this is a reference, in case there is a confusion in the future)
-    return false if remember_digest.nil?  #accounts for the multiple browsers that try to log out of the site
-    BCrypt::Password.new(remember_digest).is_password?(remember_token)  # note this is the same as BCrypt::Password.new(remember_digest) == remember_token but it is clearer
+  # this generalize method works for any attribute (remember_digest, activation_digest, etc)
+  # example => authenticated(:remember, remember_token)
+  def authenticated?(attribute, token)
+    # metaprogramming is a program that writes program
+    # example of metaprogramming using send method
+    # SEND method lets us call a method with a name of our choice by “sending a message” to a given object
+    # EXAMPLE
+    # user = User.first
+    # user.activation_digest => "$2a$10$4e6TFzEJAVNyjLv8Q5u22ensMt28qEkx0roaZvtRcp6UZKRM6N9Ae"
+    # user.send(:activation_digest) => "$2a$10$4e6TFzEJAVNyjLv8Q5u22ensMt28qEkx0roaZvtRcp6UZKRM6N9Ae"
+    # user.send('activation_digest') => "$2a$10$4e6TFzEJAVNyjLv8Q5u22ensMt28qEkx0roaZvtRcp6UZKRM6N9Ae"
+    # attribute = :activation
+    # user.send("#{attribute}_digest") => "$2a$10$4e6TFzEJAVNyjLv8Q5u22ensMt28qEkx0roaZvtRcp6UZKRM6N9Ae"
+
+    digest = send("#{attribute}"_digest)
+    return false if digest.nil?  #accounts for the multiple browsers that try to log out of the site
+    BCrypt::Password.new(digest).is_password?(token)  # note this is the same as BCrypt::Password.new(remember_digest) == remember_token but it is clearer
   end
 
   # method to forget a user
