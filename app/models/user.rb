@@ -57,7 +57,7 @@ class User < ActiveRecord::Base
     # attribute = :activation
     # user.send("#{attribute}_digest") => "$2a$10$4e6TFzEJAVNyjLv8Q5u22ensMt28qEkx0roaZvtRcp6UZKRM6N9Ae"
 
-    digest = send("#{attribute}"_digest)
+    digest = send("#{attribute}_digest")
     return false if digest.nil?  #accounts for the multiple browsers that try to log out of the site
     BCrypt::Password.new(digest).is_password?(token)  # note this is the same as BCrypt::Password.new(remember_digest) == remember_token but it is clearer
   end
