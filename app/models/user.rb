@@ -83,4 +83,15 @@ class User < ActiveRecord::Base
     # whereas the before_create callback happens before the user has been created.
     self.activation_digest = User.digest(activation_token)
   end
+
+  # this method activates an account
+  def activate
+    self.update_attribute(:activated, true) # the self here is optional, since we don't have to use self inside the model. but putting it here for clarity
+    self.update_attribute(:activated_at, Time.zone.now)
+  end
+
+  # send activation link via email
+  def send_activation_email
+    UserMailer.account_activation(self).deliver_now # self is the receiver of this method
+  end
 end
