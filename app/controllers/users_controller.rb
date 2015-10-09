@@ -26,12 +26,9 @@ class UsersController < ApplicationController
   def create
     @user = User.new(user_params)
     if @user.save
-      log_in(@user)
-      # flash is used to temporary message when a user visits the page the first time. It disppears on reload or visiting a second page
-      flash[:success] = "Hi #{@user.name}, Welcome to the Rails App!"
-      # @user means /users/:id
-      # same as redirect_to user_url(@user)
-      redirect_to @user
+      UserMailer.account_activation(@user).deliver_now
+      flash[:info] = "You have successfully signed up for an account. Please check your email to activate your account. If you cannot find it, please check your spam folder."
+      redirect_to root_url
     else
       render "new"
     end
