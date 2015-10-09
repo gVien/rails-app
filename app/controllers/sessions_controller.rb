@@ -6,10 +6,15 @@ class SessionsController < ApplicationController
     @user = User.find_by(email: params[:session][:email].downcase)
 
     if @user && @user.authenticate(params[:session][:password])
-      log_in(@user)
-      params[:session][:remember_me] == "1" ? remember(@user) : forget(@user) # value of checkbox is "1", and "0" if unchecked
+      if @user.activated?
+        log_in(@user)
+        params[:session][:remember_me] == "1" ? remember(@user) : forget(@user) # value of checkbox is "1", and "0" if unchecked
       # redirect_to @user  # or user_url(user) -- not need if friendly forwarding is used
-      redirect_back_to_or(@user)  #friendl forwarding
+        redirect_back_to_or(@user)  #friendl forwarding
+      else
+        flash[:warning] = "Account not activated. Check your email for the activation link."
+        redirect_to root_url
+      end
     else
       # create an error message and render log in page
       # flash does not work like the one in the user controller since the render method does not count as a request
