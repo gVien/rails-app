@@ -16,11 +16,14 @@ class UserMailerTest < ActionMailer::TestCase
   end
 
   test "password_reset" do
-    mail = UserMailer.password_reset
-    assert_equal "Password reset", mail.subject
-    assert_equal ["to@example.org"], mail.to
-    assert_equal ["from@example.com"], mail.from
-    assert_match "Hi", mail.body.encoded
+    user = users(:gai)
+    user.reset_token = User.new_token
+    mail = UserMailer.password_reset(user)
+    assert_equal "Password Reset", mail.subject
+    assert_equal [user.email], mail.to  # send to user's email
+    assert_equal ["from@example.com"], mail.from  # this is defined in ../mailers/application_mail.rb
+    assert_match user.reset_token, mail.body.encoded  # checking that the token matches with the token found in the email's body
+    assert_match CGI::escape(user.email), mail.body.encoded # CGI::escape(user.email) is the g@example.com encoded to g%40example.com (this test checks for the user's email matches with the one found in the body of email)
   end
 
 end
