@@ -12,7 +12,7 @@
       and then submitting it along with the rest of the form’s information -->
       <!-- hidden field tag => params[:email -->
       <!-- hidden field => params[:user][:email] -->
-      <%= f.hidden_field_tag :email, @user.email %>
+      <%= hidden_field_tag :email, @user.email %>
 
       <%= f.label :password %>
       <%= f.password_field :password, class: "form-control" %>
