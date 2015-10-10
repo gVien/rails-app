@@ -67,23 +67,6 @@ class User < ActiveRecord::Base
     update_attribute(:remember_digest, nil)
   end
 
-  # lower case email (case insensitive)
-  def downcase_email
-    self.email = email.downcase
-  end
-
-  # this creates the activation token and digest for account activation
-  # a newly signed up user will have activation token and digest assigned to each user object
-  # before it's created (uses before_create callback)
-
-  def create_activation_digest
-    self.activation_token = User.new_token  # note self refers to the instance of User class while User refers to the class method
-    # similar to the remember method above but we won't be using `update_attribute` since we are not updating the attribute this time
-    # the difference this time is that the remember tokens and digests are created for users that already exist in the database,
-    # whereas the before_create callback happens before the user has been created.
-    self.activation_digest = User.digest(activation_token)
-  end
-
   # this method activates an account
   def activate
     self.update_attribute(:activated, true) # the self here is optional, since we don't have to use self inside the model. but putting it here for clarity
@@ -113,6 +96,25 @@ class User < ActiveRecord::Base
 
   # returns true if password is expired, false otherwise
   def password_reset_expired?
-    self.reset_sent_at < 2.hours.ago
+    self.reset_sent_at < 2.hours.ago  # the "<" should be read "earlier than" => “Password reset sent earlier than two hours ago"
   end
+
+  private
+
+    # lower case email (case insensitive)
+    def downcase_email
+      self.email = email.downcase
+    end
+
+    # this creates the activation token and digest for account activation
+    # a newly signed up user will have activation token and digest assigned to each user object
+    # before it's created (uses before_create callback)
+
+    def create_activation_digest
+      self.activation_token = User.new_token  # note self refers to the instance of User class while User refers to the class method
+      # similar to the remember method above but we won't be using `update_attribute` since we are not updating the attribute this time
+      # the difference this time is that the remember tokens and digests are created for users that already exist in the database,
+      # whereas the before_create callback happens before the user has been created.
+      self.activation_digest = User.digest(activation_token)
+    end
 end
