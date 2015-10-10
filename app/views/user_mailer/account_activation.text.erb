@@ -1,0 +1,7 @@
+Hi <%= @user.name.capitalize %>!
+
+Welcome to the Rails App.
+
+Thank you for registering on our website. Before we can proceed, please activate your account by visiting the link below:
+
+<%= edit_account_activation_url(@user.activation_token, email: @user.email) %>

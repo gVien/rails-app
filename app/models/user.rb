@@ -1,6 +1,7 @@
 class User < ActiveRecord::Base
-  attr_accessor :remember_token
-  before_save { self.email = email.downcase }  # can be upcase, make email to be uniform so that it is case insensitive before saving to database
+  attr_accessor :remember_token, :activation_token, :reset_token
+  before_save :downcase_email # can be upcase, make email to be uniform so that it is case insensitive before saving to database
+  before_create :create_activation_digest   # before create the user (e.g. User.new), assign the activatio token & digest
   validates :name, :presence => true, :length => { maximum: 50 }
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i
   validates :email, :presence => true, :length => { maximum: 255 }, :format => { with: VALID_EMAIL_REGEX }, :uniqueness => { case_sensitive: false }
@@ -42,14 +43,78 @@ class User < ActiveRecord::Base
 
   # returns true if the given token matches the digest
   # this is similar to authenticate method from BCrypt
-  def authenticated?(remember_token)
-    # remember_token is not the same as the accessor (this is a reference, in case there is a confusion in the future)
-    return false if remember_digest.nil?  #accounts for the multiple browsers that try to log out of the site
-    BCrypt::Password.new(remember_digest).is_password?(remember_token)  # note this is the same as BCrypt::Password.new(remember_digest) == remember_token but it is clearer
+  # this generalize method works for any attribute (remember_digest, activation_digest, etc)
+  # example => authenticated(:remember, remember_token)
+  def authenticated?(attribute, token)
+    # metaprogramming is a program that writes program
+    # example of metaprogramming using send method
+    # SEND method lets us call a method with a name of our choice by “sending a message” to a given object
+    # EXAMPLE
+    # user = User.first
+    # user.activation_digest => "$2a$10$4e6TFzEJAVNyjLv8Q5u22ensMt28qEkx0roaZvtRcp6UZKRM6N9Ae"
+    # user.send(:activation_digest) => "$2a$10$4e6TFzEJAVNyjLv8Q5u22ensMt28qEkx0roaZvtRcp6UZKRM6N9Ae"
+    # user.send('activation_digest') => "$2a$10$4e6TFzEJAVNyjLv8Q5u22ensMt28qEkx0roaZvtRcp6UZKRM6N9Ae"
+    # attribute = :activation
+    # user.send("#{attribute}_digest") => "$2a$10$4e6TFzEJAVNyjLv8Q5u22ensMt28qEkx0roaZvtRcp6UZKRM6N9Ae"
+
+    digest = send("#{attribute}_digest")
+    return false if digest.nil?  #accounts for the multiple browsers that try to log out of the site
+    BCrypt::Password.new(digest).is_password?(token)  # note this is the same as BCrypt::Password.new(remember_digest) == remember_token but it is clearer
   end
 
   # method to forget a user
   def forget
     update_attribute(:remember_digest, nil)
   end
+
+  # this method activates an account
+  def activate
+    self.update_attribute(:activated, true) # the self here is optional, since we don't have to use self inside the model. but putting it here for clarity
+    self.update_attribute(:activated_at, Time.zone.now)
+  end
+
+  # send activation link via email
+  def send_activation_email
+    UserMailer.account_activation(self).deliver_now # self is the receiver of this method
+  end
+
+  # similar to create_activation_digest to create reset token & digest
+  # note the use of update_attribute since attribute is already in the database
+  def create_reset_digest
+    # create reset token and make it attribute accessible
+    # to be used in reset url, for example
+    # /password_resets/[reset_token]/edit?email=example%40railstutorial.org
+    self.reset_token = User.new_token
+    self.update_attribute(:reset_digest, User.digest(reset_token))  # the self here is optional, since we don't have to use self inside the model. but putting it here for clarity
+    self.update_attribute(:reset_sent_at, Time.zone.now)
+  end
+
+  # send reset email instruction to user
+  def send_password_reset_email
+   UserMailer.password_reset(self).deliver_now # self is the receiver of this method
+  end
+
+  # returns true if password is expired, false otherwise
+  def password_reset_expired?
+    self.reset_sent_at < 2.hours.ago  # the "<" should be read "earlier than" => “Password reset sent earlier than two hours ago"
+  end
+
+  private
+
+    # lower case email (case insensitive)
+    def downcase_email
+      self.email = email.downcase
+    end
+
+    # this creates the activation token and digest for account activation
+    # a newly signed up user will have activation token and digest assigned to each user object
+    # before it's created (uses before_create callback)
+
+    def create_activation_digest
+      self.activation_token = User.new_token  # note self refers to the instance of User class while User refers to the class method
+      # similar to the remember method above but we won't be using `update_attribute` since we are not updating the attribute this time
+      # the difference this time is that the remember tokens and digests are created for users that already exist in the database,
+      # whereas the before_create callback happens before the user has been created.
+      self.activation_digest = User.digest(activation_token)
+    end
 end

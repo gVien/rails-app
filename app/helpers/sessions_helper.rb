@@ -49,7 +49,7 @@ module SessionsHelper
     elsif (user_id = cookies.signed[:user_id])
       # raise   # test still passes, so this elsif branch is not tested (test would raise an error if it gets here)
       user = User.find_by(id: user_id)  # cookies
-      if user && user.authenticated?(cookies[:remember_token])
+      if user && user.authenticated?(:remember, cookies[:remember_token])
         log_in(user)
         @current_user = user
       end

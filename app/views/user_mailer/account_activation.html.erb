@@ -1,0 +1,12 @@
+<h1>Rails App</h1>
+
+<p>Hi <%= @user.name.capitalize %>!</p>
+
+<p>Thank you for registering on our website. Before we can proceed, please activate your account by clicking the link below:</p>
+
+<%= link_to "Activate", edit_account_activation_url(@user.activation_token, email: @user.email) %>
+
+<p>or if you wish, you may copy and paste the link below into your browser</p>
+
+<%= edit_account_activation_url(@user.activation_token, email: @user.email) %>
+
