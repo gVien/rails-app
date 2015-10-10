@@ -1,5 +1,5 @@
 class User < ActiveRecord::Base
-  attr_accessor :remember_token, :activation_token
+  attr_accessor :remember_token, :activation_token, :reset_token
   before_save :downcase_email # can be upcase, make email to be uniform so that it is case insensitive before saving to database
   before_create :create_activation_digest   # before create the user (e.g. User.new), assign the activatio token & digest
   validates :name, :presence => true, :length => { maximum: 50 }
@@ -93,5 +93,21 @@ class User < ActiveRecord::Base
   # send activation link via email
   def send_activation_email
     UserMailer.account_activation(self).deliver_now # self is the receiver of this method
+  end
+
+  # similar to create_activation_digest to create reset token & digest
+  # note the use of update_attribute since attribute is already in the database
+  def create_reset_digest
+    # create reset token and make it attribute accessible
+    # to be used in reset url, for example
+    # /password_resets/[reset_token]/edit?email=example%40railstutorial.org
+    self.reset_token = User.new_token
+    self.update_attribute(:reset_digest, User.digest(reset_token))  # the self here is optional, since we don't have to use self inside the model. but putting it here for clarity
+    self.update_attribute(:reset_sent_at, Time.zone.now)
+  end
+
+  # send reset email instruction to user
+  def send_password_reset_email
+   UserMailer.password_reset(self).deliver_now # self is the receiver of this method
   end
 end
