@@ -110,4 +110,9 @@ class User < ActiveRecord::Base
   def send_password_reset_email
    UserMailer.password_reset(self).deliver_now # self is the receiver of this method
   end
+
+  # returns true if password is expired, false otherwise
+  def password_reset_expired?
+    self.reset_sent_at < 2.hours.ago
+  end
 end
