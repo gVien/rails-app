@@ -28,5 +28,13 @@ class MicropostTest < ActiveSupport::TestCase
     assert_not @micropost.valid?  # passes if argument returns false
   end
 
+  test "order of microposts should be at the most recent first" do
+    # p microposts(:micropost1) # returns the fixture micropost for `micropost1`
+    # default order in Micropost is ASC.
+    # need to reverse this with `default_scope` in micropost model (e.g. order DESC)
+    # `default_scope` can be used to set up the default order of database (e.g. in this case, order("created_at DESC") in sql)
+    # order(created_at: :desc) in Active Record
+    assert_equal microposts(:most_recent), Micropost.first
+  end
 
 end
