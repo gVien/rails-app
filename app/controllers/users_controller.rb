@@ -12,11 +12,14 @@ class UsersController < ApplicationController
   before_action :admin_user, only: :destroy
 
   def index
-    @users = User.paginate(page: params[:page])
+    @users = User.where(activated: true).paginate(page: params[:page])
   end
 
   def show
     @user = User.find(params[:id])
+    # redirect to root url if user's account is not activated
+    # note `and` and `&&` are nearly identical but `&&` takes precedence over `and` and binds too tightly to root_url
+    redirect_to root_url and return unless @user.activated?
   end
 
   def new
