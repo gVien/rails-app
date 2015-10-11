@@ -96,4 +96,14 @@ class UserTest < ActiveSupport::TestCase
     # -- multiple browsers "bug" if one browser window logs out while the other isn't)
     assert_not(@user.authenticated?(:remember, ""))
   end
+
+  test "associated microposts should be destroyed if the user who posted is destroyed" do
+    @user.save
+    # create a microposts
+    @user.microposts.create(content: "this post will get destroyed if the user is")
+    # length of all of Micropost should be 1 less after @user is destroyed
+    assert_difference "Micropost.all.length", -1 do   #or "Micropost.count"
+      @user.destroy
+    end
+  end
 end
