@@ -3,9 +3,9 @@ require 'test_helper'
 class MicropostTest < ActiveSupport::TestCase
   def setup
     @user = users(:gai)
-    # this is hard coding but will generalize it later
-    # for now, making the test to pass
-    @micropost = Micropost.new(content: "new post", user_id: @user.id)
+    # `build` is similar to `new` in the sense that it returns the object in memory (without id) without saving it in the database
+    # use `save` method to save it
+    @micropost = @user.microposts.build(content: "new post")
   end
 
   test "should be valid" do
