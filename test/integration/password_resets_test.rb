@@ -122,4 +122,30 @@ class PasswordResetsTest < ActionDispatch::IntegrationTest
     assert_not flash.empty? #26
     assert_redirected_to user   #27
   end
+
+  # test to make sure the expiration method works
+  # 1. get the new password reset form
+  # 2. enter email address (post request)
+  # 3. assign the users from ctrl
+  # 4. update the assigned user attribute and have the password expired
+  # 5. get the edit password/confirmation form for user
+  # 6. verify the link is redirected to the new password reset form
+  # 6.1 redirect to edit page
+  # 7. verify the body contains "expired"
+  test "expired token" do
+    get new_password_reset_path
+    post password_resets_path, password_reset: { email: @user.email }
+    @user = assigns(:user)
+    @user.update_attribute(:reset_sent_at, 5.hours.ago) # password reset sent 5 hours which expires 3 hours
+    get edit_password_reset_path(@user.reset_token, email: @user.email)
+    assert_redirected_to new_password_reset_path
+    # note, one can use these tests in case if a user is already on the page before the expiration and attempted to update it after expiration
+    # patch password_reset_path(@user.reset_token),
+    #       email: @user.email,
+    #       user: { password:              "123456",
+    #               password_confirmation: "123456" }
+    # assert_response :redirect
+    follow_redirect!  # redirect the page to edit_password_reset_path
+    assert_match /(expired)/i, response.body
+  end
 end
