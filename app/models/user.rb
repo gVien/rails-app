@@ -69,8 +69,7 @@ class User < ActiveRecord::Base
 
   # this method activates an account
   def activate
-    self.update_attribute(:activated, true) # the self here is optional, since we don't have to use self inside the model. but putting it here for clarity
-    self.update_attribute(:activated_at, Time.zone.now)
+    self.update_columns(activated: true, activated_at: Time.zone.now)   # the self here is optional, since we don't have to use self inside the model. but putting it here for clarity
   end
 
   # send activation link via email
@@ -85,8 +84,7 @@ class User < ActiveRecord::Base
     # to be used in reset url, for example
     # /password_resets/[reset_token]/edit?email=example%40railstutorial.org
     self.reset_token = User.new_token
-    self.update_attribute(:reset_digest, User.digest(reset_token))  # the self here is optional, since we don't have to use self inside the model. but putting it here for clarity
-    self.update_attribute(:reset_sent_at, Time.zone.now)
+    self.update_columns(reset_digest: User.digest(reset_token), reset_sent_at: Time.zone.now)   # the self here is optional, since we don't have to use self inside the model. but putting it here for clarity
   end
 
   # send reset email instruction to user
