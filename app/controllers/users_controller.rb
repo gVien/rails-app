@@ -66,17 +66,6 @@ class UsersController < ApplicationController
 
     # before filter
 
-    # check if the user is logged in
-    # this method is being used with before filter, which uses the before_action method,
-    # which checks for a particular to be called method before it performs the given action
-    def logged_in_user
-      unless logged_in?   #if user is not logged in (if false)
-        store_location  # friendly forwarding
-        flash[:danger] = "Please log in to continue."
-        redirect_to login_url
-      end
-    end
-
     # this method checks that when current user attempts to edit another user's
     # profile (change "/users/1/edit" to "/users/2/edit), it redirect to root url
     # confirms the correct user
