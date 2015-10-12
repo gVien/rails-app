@@ -19,6 +19,7 @@ class UsersController < ApplicationController
     @user = User.find(params[:id])
     # redirect to root url if user's account is not activated
     # note `and` and `&&` are nearly identical but `&&` takes precedence over `and` and binds too tightly to root_url
+    @microposts = @user.microposts.paginate(page: params[:page])
     redirect_to root_url and return unless @user.activated?
   end
 
