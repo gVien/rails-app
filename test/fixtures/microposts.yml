@@ -4,8 +4,17 @@
 micropost<%= n %>:
   content: <%= Faker::Lorem.sentence %>
   created_at: <%= (5..15).to_a.sample.minutes.ago %>
+  user: gai
 <% end %>
 
 most_recent:
   content: "this is the newest micropost"
   created_at: <%= Time.zone.now %>
+
+<% 35.times do |n| %>
+<% next if n <= 5 %>
+micropost<%= n %>:
+  content: <%= Faker::Lorem.sentence %>
+  created_at: <%= 4.minutes.ago %>
+  user: gai
+<% end %>
