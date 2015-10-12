@@ -8,7 +8,6 @@
       </h1>
     </section>
   </aside>
-  <p><%= link_to "Create", microposts_path %></p>
   <div class="col-md-4">
     <% if @user.microposts.any? %>
       <h3>Microposts (<%= @user.microposts.count %>)</h3>
