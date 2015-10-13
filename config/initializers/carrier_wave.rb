@@ -1,5 +1,5 @@
 if Rails.env.production?
-  CarrierWave.config do |config|
+  CarrierWave.configure do |config|
     config.fog_credentials = {
       # configuration for AWS S3 with AWS IAM Access
       # note these variables must be set on Heroku side
