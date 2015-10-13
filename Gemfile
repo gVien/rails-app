@@ -1,8 +1,14 @@
 source 'https://rubygems.org'
 
-gem 'rails', '4.2.4'
-gem 'bcrypt', '3.1.7'
-gem 'faker',  '1.4.2'
+gem 'rails',                   '4.2.4'
+gem 'bcrypt',                  '3.1.7'
+gem 'faker',                   '1.4.2'
+# carrierwave is image uploader from Ruby apps
+gem 'carrierwave',             '0.10.0'
+# mini-magick is image resizing (it's a wrapper for imagemagick gem)
+gem 'mini_magick',             '3.8.0'
+# fog is image uploader for the cloud
+gem 'fog',                     '1.26.0'
 gem 'will_paginate',           '3.0.7'
 gem 'bootstrap-will_paginate', '0.0.10'
 gem 'bootstrap-sass', '~> 3.3.5'  #converts Less to Sass, since Rails asset pipeline supports the Sass language by default
