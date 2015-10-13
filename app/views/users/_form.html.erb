@@ -1,7 +1,7 @@
 
 <%= form_for(@user) do |f| %>
 <!-- rails convention to use dedicated shares/ directory for partials exepected to be used in views across multiple controllers -->
-  <%= render "shared/error_messages", object: @user %>
+  <%= render "shared/error_messages", object: f.object %>
 
   <%= f.label :name %>
   <%= f.text_field :name, class: "form-control" %>

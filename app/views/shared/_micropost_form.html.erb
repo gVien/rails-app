@@ -1,0 +1,28 @@
+<%# the `html: { multipart: true } enables file upload
+ I think multipart: true may not be needed for new version of rails
+ as deleting it still works %>
+<%= form_for(@micropost, html: { multipart: true }) do |f| %>
+  <%#  f.object is @micropost %>
+  <%= render "shared/error_messages", object: f.object   %>
+
+  <div class="field">
+    <%= f.text_area :content, placeholder: "Compos a new micropost..." %>
+  </div>
+
+  <%= f.submit "Post", class: "btn btn-primary" %>
+  <span class="picture">
+    <%# client side validation for file extension %>
+    <%= f.file_field :picture, accept: "image/jpeg, image/jpg, image/png, img/gif" %>
+  </span>
+<% end %>
+
+<%# client side validation for file size, warns user if it's greater than 5MB %>
+
+<script type="text/javascript">
+  $("#micropost_picture").bind("change", function() {
+    var sizeInMegabytes = this.files[0].size/1024/1024;
+    if (sizeInMegabytes > 5) {
+      alert("Image size cannot be greater than 5MB")
+    }
+  });
+</script>

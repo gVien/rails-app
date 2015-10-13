@@ -1,5 +1,6 @@
 class User < ActiveRecord::Base
   attr_accessor :remember_token, :activation_token, :reset_token
+  has_many :microposts, dependent: :destroy # if a user is destroyed, all of its microposts will be destroyed
   before_save :downcase_email # can be upcase, make email to be uniform so that it is case insensitive before saving to database
   before_create :create_activation_digest   # before create the user (e.g. User.new), assign the activatio token & digest
   validates :name, :presence => true, :length => { maximum: 50 }
@@ -95,6 +96,13 @@ class User < ActiveRecord::Base
   # returns true if password is expired, false otherwise
   def password_reset_expired?
     self.reset_sent_at < 2.hours.ago  # the "<" should be read "earlier than" => “Password reset sent earlier than two hours ago"
+  end
+
+  def feed
+    # question mark ensures the id is properly escaped before being included in the underlying SQL query.
+    # this will avoid a serious security known as the SQL injection
+    # id is an integer, to prevent SQL injection but escaping is a good practice
+    Micropost.where("user_id = ?", id)  # or simply `microposts`
   end
 
   private

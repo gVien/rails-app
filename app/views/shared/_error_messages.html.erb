@@ -1,10 +1,15 @@
-<% if @user.errors.any? %>
+<%# change @user to object to work with @microposts as well
+    f.object => f.@user and f.@microposts
+    ** when rendering the error messages, an object must be specified
+    e.g. object: f.object **
+ %>
+<% if object.errors.any? %>
   <div id="error_explanation">
     <div class="alert alert-danger">
-      The form contains <%= pluralize(@user.errors.count, "error") %>.
+      The form contains <%= pluralize(object.errors.count, "error") %>.
     </div>
     <ul>
-    <% @user.errors.full_messages.each do |msg| %>
+    <% object.errors.full_messages.each do |msg| %>
       <li><%= msg %></li>
     <% end %>
     </ul>

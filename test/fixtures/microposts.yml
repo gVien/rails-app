@@ -1,0 +1,40 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+<% 5.times do |n| %>
+micropost<%= n %>:
+  content: <%= Faker::Lorem.sentence %>
+  created_at: <%= (5..15).to_a.sample.minutes.ago %>
+  user: gai
+<% end %>
+
+most_recent:
+  content: "this is the newest micropost"
+  created_at: <%= Time.zone.now %>
+
+<% 35.times do |n| %>
+<% next if n <= 5 %>
+micropost<%= n %>:
+  content: <%= Faker::Lorem.sentence %>
+  created_at: <%= 4.minutes.ago %>
+  user: gai
+<% end %>
+
+food:
+  content: "i love food"
+  created_at: <%= 5.hours.ago %>
+  user: new_user
+
+cat:
+  content: "who is a cat lover?"
+  created_at: <%= 1.hours.ago %>
+  user: new_user
+
+dog:
+  content: "dog is men best friend"
+  created_at: <%= 5.days.ago %>
+  user: new_user
+
+code:
+  content: "love to code for a living"
+  created_at: <%= 1.years.ago %>
+  user: new_user
