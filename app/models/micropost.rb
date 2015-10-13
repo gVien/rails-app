@@ -7,4 +7,14 @@ class Micropost < ActiveRecord::Base
   mount_uploader(:picture, PictureUploader)
   validates :user_id, presence: true
   validates :content, presence: true, length: { maximum: 140} # or { in: 1..140 }
+  validate :picture_size  # second validation to set file size limit
+
+  private
+    # second validation/constraint: file size (server side)
+    # limit
+    def picture_size
+      if picture.size > 5.megabytes # or self.picture.size
+        errors.add("File size cannot be bigger than 5MB")
+      end
+    end
 end
