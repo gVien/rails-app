@@ -1,4 +1,7 @@
-<%= form_for(@micropost) do |f| %>
+<%# the `html: { multipart: true } enables file upload
+ I think multipart: true may not be needed for new version of rails
+ as deleting it still works %>
+<%= form_for(@micropost, html: { multipart: true }) do |f| %>
   <%#  f.object is @micropost %>
   <%= render "shared/error_messages", object: f.object   %>
 
@@ -7,4 +10,7 @@
   </div>
 
   <%= f.submit "Post", class: "btn btn-primary" %>
+  <span class="picture">
+    <%= f.file_field :picture %>
+  </span>
 <% end %>

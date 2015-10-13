@@ -25,7 +25,7 @@ class MicropostsController < ApplicationController
 
   private
     def micropost_params
-      params.require(:micropost).permit(:content)
+      params.require(:micropost).permit(:content, :picture)
     end
 
     # check if it's the correct user

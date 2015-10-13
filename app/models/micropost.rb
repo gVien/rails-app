@@ -2,6 +2,9 @@ class Micropost < ActiveRecord::Base
   belongs_to :user
   # -> is “stabby lambda” syntax for an object called a Proc (procedure) or lambda
   default_scope -> { order(created_at: :desc) } # create default order for microposts
+  # carrierwave method to associate the picture attribute with the model,
+  # :picture is the attribute and PictureUploader is the class in /upload/picture_uploader.rb
+  mount_uploader(:picture, PictureUploader)
   validates :user_id, presence: true
   validates :content, presence: true, length: { maximum: 140} # or { in: 1..140 }
 end
