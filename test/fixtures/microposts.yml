@@ -18,3 +18,23 @@ micropost<%= n %>:
   created_at: <%= 4.minutes.ago %>
   user: gai
 <% end %>
+
+food:
+  content: "i love food"
+  created_at: <%= 5.hours.ago %>
+  user: new_user
+
+cat:
+  content: "who is a cat lover?"
+  created_at: <%= 1.hours.ago %>
+  user: new_user
+
+dog:
+  content: "dog is men best friend"
+  created_at: <%= 5.days.ago %>
+  user: new_user
+
+code:
+  content: "love to code for a living"
+  created_at: <%= 1.years.ago %>
+  user: new_user
