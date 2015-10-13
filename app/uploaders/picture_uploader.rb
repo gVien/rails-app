@@ -4,7 +4,12 @@ class PictureUploader < CarrierWave::Uploader::Base
 
   # Include RMagick or MiniMagick support:
   # include CarrierWave::RMagick
-  # include CarrierWave::MiniMagick
+
+  # note ImageMagick must be installed (brew install imagemagick for Mac)
+  # in order for MiniMagick to work, otherwise the resizing will not work
+  # and an error will raise if the user attempts to post with the image
+  include CarrierWave::MiniMagick
+  process resize_to_limit: [400, 400]
 
   # Choose what kind of storage to use for this uploader:
   storage :file
