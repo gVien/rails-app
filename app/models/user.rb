@@ -1,6 +1,11 @@
 class User < ActiveRecord::Base
   attr_accessor :remember_token, :activation_token, :reset_token
   has_many :microposts, dependent: :destroy # if a user is destroyed, all of its microposts will be destroyed
+  # add class due to convention is broken, also if a user is destroy,
+  # then the relationship is destroyed also
+  # if user A is following user B but not vice versa, user A has an active relationship
+  # with user B and user B has a passive relationship with user A
+  has_many :active_relationships, class_name: "Relationship", foreign_key: "follower_id", dependent: :destroy
   before_save :downcase_email # can be upcase, make email to be uniform so that it is case insensitive before saving to database
   before_create :create_activation_digest   # before create the user (e.g. User.new), assign the activatio token & digest
   validates :name, :presence => true, :length => { maximum: 50 }
