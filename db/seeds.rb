@@ -8,7 +8,7 @@
 
 # populate database with fake data
 User.create!( name:  "Example User",
-              email: "example@railstutorial.org",
+              email: "example@test.org",
               password:              "123456",
               password_confirmation: "123456",
               admin: true,
@@ -17,8 +17,8 @@ User.create!( name:  "Example User",
 
 100.times do |n|
   name  = Faker::Name.name
-  email = "example-#{n+1}@railstutorial.org"
-  password = "123456"
+  email = "example-#{n+1}@test.org"
+  password = SecureRandom.base64(12)
   User.create!( name:  name,
                 email: email,
                 password:              password,
@@ -32,3 +32,11 @@ users = User.order(:created_at).take(6)
   content = Faker::Lorem.sentence(10)
   users.each { |user| user.microposts.create!(content: content) }
 end
+
+# following/follower
+users = User.all
+user = users.first
+following = users[2..25]
+followers = users[26..50]
+following.each { |followed| user.follow(followed) }
+followers.each { |follower| follower.follow(user) }
