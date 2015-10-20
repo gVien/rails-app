@@ -22,4 +22,16 @@ class RelationshipTest < ActiveSupport::TestCase
     @relationship.followed_id = ""
     assert_not @relationship.valid? #pass if this is false (since it's not valid)
   end
+
+  # define users
+  # TTD for following user, check if user is being followed (following?), and unfollow user
+  test "should follow and unfollow user" do
+    gai = users(:gai)
+    kathy = users(:kathy)
+    assert_not gai.following?(kathy) # check if gai is following kathy, to pass, should be false initially
+    gai.following(kathy)  #now gai follows kathy
+    assert gai.following?(kathy)  #check again, which should returns true to pass
+    gai.unfollow(kathy)  #gai unfollow kathy
+    assert_not gai.following?(kathy) #gai should not follow kathy
+  end
 end

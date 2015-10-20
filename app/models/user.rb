@@ -6,6 +6,9 @@ class User < ActiveRecord::Base
   # if user A is following user B but not vice versa, user A has an active relationship
   # with user B and user B has a passive relationship with user A
   has_many :active_relationships, class_name: "Relationship", foreign_key: "follower_id", dependent: :destroy
+  # this is the same as `has_many :followeds, through: :active_relationships`
+  # but since it's weird to call `user.followed` to get a list of users who the user is following
+  has_many :following, through: :active_relationships, source: :followed
   before_save :downcase_email # can be upcase, make email to be uniform so that it is case insensitive before saving to database
   before_create :create_activation_digest   # before create the user (e.g. User.new), assign the activatio token & digest
   validates :name, :presence => true, :length => { maximum: 50 }
