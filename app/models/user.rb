@@ -113,6 +113,24 @@ class User < ActiveRecord::Base
     Micropost.where("user_id = ?", id)  # or simply `microposts`
   end
 
+  # method to follow a user, e.g. gai.follow(kathy) => gai follows kathy
+  def follow(other_user)
+    # Relationship.new(follower_id: self.id, followed_id: user.id)
+    # `active_relationships` is another name for `Relationship` model for active relationship (as described above)
+    active_relationships.create(followed_id: other_user.id) #follower_id is automatically set, e.g. gai.id, and kathy.id is followed_id
+  end
+
+  # method to unfollow a user, e.g. gai.unfollow(kathy) => gai unfollows kathy
+  def unfollow(other_user)
+    active_relationships.find_by(followed_id: other_user.id).destroy if active_relationships.find_by(followed_id: other_user.id)
+  end
+
+  # method to check if a user is following the other_user, e.g. gai.following?(kathy) => true or false
+  def following?(other_user)
+    self.following.include?(other_user) #self can be ommited since we are in the User model
+  end
+
+
   private
 
     # lower case email (case insensitive)

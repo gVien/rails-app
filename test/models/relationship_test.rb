@@ -29,7 +29,7 @@ class RelationshipTest < ActiveSupport::TestCase
     gai = users(:gai)
     kathy = users(:kathy)
     assert_not gai.following?(kathy) # check if gai is following kathy, to pass, should be false initially
-    gai.following(kathy)  #now gai follows kathy
+    gai.follow(kathy)  #now gai follows kathy
     assert gai.following?(kathy)  #check again, which should returns true to pass
     gai.unfollow(kathy)  #gai unfollow kathy
     assert_not gai.following?(kathy) #gai should not follow kathy
