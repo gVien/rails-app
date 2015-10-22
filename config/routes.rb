@@ -7,7 +7,13 @@ Rails.application.routes.draw do
   get    'login'   => 'sessions#new'
   post   'login'   => 'sessions#create'
   delete 'logout'  => 'sessions#destroy'
-  resources :users
+  resources :users do
+    # the member method arranges for the routes to respond to URLs containing the user id.
+    # alternatively `collection` works in similar way e.g. /users/tigers to display all tigers
+    member do
+      get :following, :followers  #/users/1/following and /users/1/followers
+    end
+  end
   resources :account_activations, only: [:edit]
   resources :password_resets, only: [:new, :create, :edit, :update]
   resources :microposts, only: [:create, :destroy]
