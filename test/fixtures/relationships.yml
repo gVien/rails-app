@@ -13,3 +13,11 @@ follow3:
 follow4:
   follower: gai
   followed: user1
+
+follow5:
+  follower: user2
+  followed: gai
+
+follow6:
+  follower: new_user
+  followed: user2

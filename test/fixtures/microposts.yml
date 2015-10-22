@@ -38,3 +38,13 @@ code:
   content: "love to code for a living"
   created_at: <%= 1.years.ago %>
   user: new_user
+
+post1:
+  content: "user2 here"
+  created_at: <%= 1.years.ago %>
+  user: user2
+
+post2:
+  content: "user2 first post"
+  created_at: <%= 2.years.ago %>
+  user: user2
