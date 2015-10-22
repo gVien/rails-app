@@ -1,0 +1,15 @@
+follow1:
+  follower: gai
+  followed: new_user
+
+follow2:
+  follower: new_user
+  followed: kathy
+
+follow3:
+  follower: kathy
+  followed: gai
+
+follow4:
+  follower: gai
+  followed: user1
