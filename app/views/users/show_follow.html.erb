@@ -1,0 +1,33 @@
+<% provide(:title, @title) %><%# title from following or followers method %>
+<div class="row">
+  <!-- user info -->
+  <aside class="col-md-4">
+    <section class="user_info">
+      <%= gravatar_for @user %>
+      <h1> @user.name </h1>
+      <span><%= link_to "view my profile", @user %></span>
+      <span><%= @user.microposts.count %> <b>Microposts</b></span>
+    </section>
+    <section class="stats">
+      <%= render "shared/stats" %>
+      <% if @users.any? %>
+        <% @users.each do |user| %>
+          <a href="<%= user_path(user) %>"><%# should have used link_to(grav,user) %>
+            <div class="user_avatars">
+              <%= gravatar_for user, size: 30 %>
+            </div>
+          </a>
+        <% end %>
+      <% end %>
+    </section>
+  </aside>
+  <div class="col-md-8">
+    <h3><%= @title %></h3>
+    <% if @users.any? %>
+      <ul class="users follow">
+        <%= render @users %>
+      </ul>
+      <%= will_paginate %>
+    <% end %>
+  </div>
+</div>
