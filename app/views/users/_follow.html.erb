@@ -1,0 +1,8 @@
+<%# active relationships is used when a user is following another
+but not the other way around. %>
+<%= form_for(current_user.active_relationships.build) do |f| %>
+  <%# current user is the follower, @user is the one being followed %>
+  <%# hidden_field_tag => <input id="followed_id" name="followed_id" type="hidden" value="1" /> %>
+  <div><%= hidden_field_tag :followed_id, @user.id %></div>
+  <%= f.submit "Follow", class: "btn btn-primary" %>
+<% end %>
