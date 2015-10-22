@@ -1,0 +1,6 @@
+// AJAX call for create with Ruby
+// escape Javascript is used to escape out the result when inserting HTML in JS file
+// update the button from "unfollow" to "follow"
+$("#follow_form").html("<%= escape_javascript(render('users/unfollow')) %>");
+// update the count of followers stat
+$("#followers").html("<%= @user.followers.count %>");
