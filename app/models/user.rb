@@ -115,7 +115,7 @@ class User < ActiveRecord::Base
     # id is an integer, to prevent SQL injection but escaping is a good practice
     # following_ids is an array of all the user id of the list current.following
     # this refactor is more convenient since we can use the variable inserted in more than one place
-    Micropost.where("user_id IN (:following_ids) OR user_id = ?", following_ids: following_ids, user_id: id) # update feed for status feed implementation
+    Micropost.where("user_id IN (:following_ids) OR user_id = :user_id", following_ids: following_ids, user_id: id) # update feed for status feed implementation
   end
 
   # method to follow a user, e.g. gai.follow(kathy) => gai follows kathy
