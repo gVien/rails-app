@@ -60,4 +60,17 @@ class FollowingTest < ActionDispatch::IntegrationTest
       xhr(:delete, relationship_path(relationship))
     end
   end
+
+  # verify all content of feed (this is similar to the users profile test) are on the page
+  # ch12 ex2
+  test "feed on Home page" do
+    get(root_path)
+    @user.feed.paginate(page: 1).each do |micropost|
+      # p "*" * 20
+      # p micropost
+      # p CGI.escapeHTML(micropost.content)
+      # p "*" * 20
+      assert_match CGI.escapeHTML(micropost.content), response.body
+    end
+  end
 end
