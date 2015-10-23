@@ -113,7 +113,9 @@ class User < ActiveRecord::Base
     # question mark ensures the id is properly escaped before being included in the underlying SQL query.
     # this will avoid a serious security known as the SQL injection
     # id is an integer, to prevent SQL injection but escaping is a good practice
-    Micropost.where("user_id IN (?) OR user_id = ?", following_ids, id) # update feed for status feed implementation
+    # following_ids is an array of all the user id of the list current.following
+    # this refactor is more convenient since we can use the variable inserted in more than one place
+    Micropost.where("user_id IN (:following_ids) OR user_id = ?", following_ids: following_ids, user_id: id) # update feed for status feed implementation
   end
 
   # method to follow a user, e.g. gai.follow(kathy) => gai follows kathy
