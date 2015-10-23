@@ -95,4 +95,15 @@ class UsersControllerTest < ActionController::TestCase
     # we still want to see that the admin attribute is false after reload
     assert_not @second_user.reload.admin?
   end
+
+  # test redirect following & follower if not log in
+  test "should redirect following if not logged in" do
+    get :following, id: @second_user #get list of following for second user (/users/1/following)
+    assert_redirected_to login_url
+  end
+
+  test "should redirect follower if not logged in" do
+    get :followers, id: @second_user #get list of followers for second user
+    assert_redirected_to login_url
+  end
 end

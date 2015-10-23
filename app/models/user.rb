@@ -1,6 +1,17 @@
 class User < ActiveRecord::Base
   attr_accessor :remember_token, :activation_token, :reset_token
   has_many :microposts, dependent: :destroy # if a user is destroyed, all of its microposts will be destroyed
+  # add class due to convention is broken, also if a user is destroy,
+  # then the relationship is destroyed also
+  # if user A is following user B but not vice versa, user A has an active relationship
+  # with user B and user B has a passive relationship with user A
+  has_many :active_relationships, class_name: "Relationship", foreign_key: "follower_id", dependent: :destroy
+  # create passive_relationship when user B is being followed by user A
+  has_many :passive_relationships, class_name: "Relationship", foreign_key: "followed_id", dependent: :destroy
+  # this is the same as `has_many :followeds, through: :active_relationships`
+  # but since it's weird to call `user.followed` to get a list of users who the user is following
+  has_many :following, through: :active_relationships, source: :followed
+  has_many :followers, through: :passive_relationships, source: :follower   #source can be ignored but keeping it to keep parallel structure (since it follows Rails convention)
   before_save :downcase_email # can be upcase, make email to be uniform so that it is case insensitive before saving to database
   before_create :create_activation_digest   # before create the user (e.g. User.new), assign the activatio token & digest
   validates :name, :presence => true, :length => { maximum: 50 }
@@ -102,8 +113,30 @@ class User < ActiveRecord::Base
     # question mark ensures the id is properly escaped before being included in the underlying SQL query.
     # this will avoid a serious security known as the SQL injection
     # id is an integer, to prevent SQL injection but escaping is a good practice
-    Micropost.where("user_id = ?", id)  # or simply `microposts`
+    # following_ids is an array of all the user id of the list current.following
+    # this refactor is more convenient since we can use the variable inserted in more than one place
+    following_ids = "SELECT followed_id FROM relationships
+                    WHERE follower_id = :user_id"
+    Micropost.where("user_id IN (#{following_ids}) OR user_id = :user_id", user_id: id) # update feed for status feed implementation
   end
+
+  # method to follow a user, e.g. gai.follow(kathy) => gai follows kathy
+  def follow(other_user)
+    # Relationship.new(follower_id: self.id, followed_id: user.id)
+    # `active_relationships` is another name for `Relationship` model for active relationship (as described above)
+    active_relationships.create(followed_id: other_user.id) #follower_id is automatically set, e.g. gai.id, and kathy.id is followed_id
+  end
+
+  # method to unfollow a user, e.g. gai.unfollow(kathy) => gai unfollows kathy
+  def unfollow(other_user)
+    active_relationships.find_by(followed_id: other_user.id).destroy if active_relationships.find_by(followed_id: other_user.id)
+  end
+
+  # method to check if a user is following the other_user, e.g. gai.following?(kathy) => true or false
+  def following?(other_user)
+    self.following.include?(other_user) #self can be ommited since we are in the User model
+  end
+
 
   private
 

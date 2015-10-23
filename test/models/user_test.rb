@@ -106,4 +106,27 @@ class UserTest < ActiveSupport::TestCase
       @user.destroy
     end
   end
+
+  # status feed test
+  test "should have the right posts from self, followed users" do
+    # see relationship fixture
+    gai = users(:gai) # follows new_user, followed by user2
+    new_user = users(:new_user) #follows user2, followed by gai
+    user2 = users(:user2) #follows gai, followed by new_user
+
+    # gai should see all of new users posts (followed user)
+    new_user.microposts.each do |post_new_user|
+      assert gai.feed.include?(post_new_user), "must see the following user's microposts"
+    end
+
+    # gai should not see any of kath's post (unfollow user)
+    user2.microposts.each do |user2_post|
+      assert_not gai.feed.include?(user2_post)
+    end
+
+    # gai should see his posts
+    gai.microposts.each do |my_post|
+      assert gai.feed.include?(my_post)
+    end
+  end
 end
